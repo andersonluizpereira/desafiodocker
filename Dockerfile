@@ -1,7 +1,7 @@
 ##### Stage 1 #####
 
 ### Use golang:1.15 as base image for building the application
-FROM golang:1.15 as builder
+FROM golang:1.10-alpine as builder
 
 ### Create new directly and set it as working directory
 RUN mkdir -p /app
@@ -12,7 +12,7 @@ WORKDIR /app
 #COPY go.sum .
 
 ### Setting a proxy for downloading modules
-ENV GOPROXY https://proxy.golang.org,direct
+#ENV GOPROXY https://proxy.golang.org,direct
 
 ### Download Go application module dependencies
 #RUN go mod download
@@ -26,7 +26,7 @@ ENV CGO_ENABLED=0
 
 ### Build the Go app for a linux OS
 ### 'scratch' and 'alpine' both are Linux distributions
-RUN GOOS=linux go build ./app.go
+RUN GOOS=linux go build -ldflags "-s -w" ./app.go
 
 ##### Stage 2 #####
 
@@ -34,7 +34,7 @@ RUN GOOS=linux go build ./app.go
 FROM scratch
 
 ### Alternatively to 'FROM scratch', use 'alpine':
-# FROM alpine:3.13.1
+#FROM alpine:3.13.1
 
 ### Set working directory
 WORKDIR /app
